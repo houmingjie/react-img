@@ -21,17 +21,21 @@ export default class Img extends Component{
         }
         const img = new Image();
         img.onload = () => {
-            this.setState({src:src});
-            onLoad&&onLoad();
+            if(!this.unmounted){
+                this.setState({src:src});
+                onLoad&&onLoad();
+            }
         };
 
         img.onerror = () => {
-            if(errorSrc){
-                this.setState({
-                    src:errorSrc
-                })
+            if(!this.unmounted){
+                if(errorSrc){
+                    this.setState({
+                        src:errorSrc
+                    })
+                }
+                onError&&onError();
             }
-            onError&&onError();
         };
 
         img.src = src||"";//no src will trigger onError,just like browser default
@@ -51,6 +55,10 @@ export default class Img extends Component{
         if (nextProps.src !== this.props.src) {
             this.dealWithSrc();
         }
+    }
+
+    componentWillUnmount(){
+        this.unmounted = true;
     }
 
     getElement(){
