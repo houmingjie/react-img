@@ -12,8 +12,11 @@ export default class Img extends Component{
         this.dealWithSrc = this.dealWithSrc.bind(this);
     }
 
-    dealWithSrc (){
-        const {src,loadingSrc,errorSrc,onError,onLoad} = this.props;
+    dealWithSrc (forceSrc){
+        let {src,loadingSrc,errorSrc,onError,onLoad} = this.props;
+
+        forceSrc&&(src = forceSrc);
+
         if(loadingSrc){
             this.setState({
                 src:loadingSrc
@@ -21,7 +24,10 @@ export default class Img extends Component{
         }
         const img = new Image();
         img.onload = () => {
+            console.info(src);
+            console.info(this.unmounted);
             if(!this.unmounted){
+                console.info(src);
                 this.setState({src:src});
                 onLoad&&onLoad();
             }
@@ -53,8 +59,12 @@ export default class Img extends Component{
 
     componentWillReceiveProps (nextProps) {
         if (nextProps.src !== this.props.src) {
-            this.dealWithSrc();
+            this.dealWithSrc(nextProps.src);
         }
+    }
+
+    componentDidUpdate(){
+
     }
 
     componentWillUnmount(){
@@ -75,7 +85,6 @@ export default class Img extends Component{
             />
     }
 }
-
 
 Img.propTypes = {
     src:PropTypes.string,
