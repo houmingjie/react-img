@@ -24,10 +24,7 @@ export default class Img extends Component{
         }
         const img = new Image();
         img.onload = () => {
-            console.info(src);
-            console.info(this.unmounted);
             if(!this.unmounted){
-                console.info(src);
                 this.setState({src:src});
                 onLoad&&onLoad();
             }
