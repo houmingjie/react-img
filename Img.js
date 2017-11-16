@@ -1,93 +1,101 @@
-import React, { Component, PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react';
 
-function noop(){};
+function noop() {
+};
 
-export default class Img extends Component{
-    constructor(props){
+export default class Img extends Component {
+    constructor(props) {
         super(props);
         this.state = {
-            src:props.placeholderSrc||props.src,
+            src: props.placeholderSrc || props.src,
         };
 
         this.dealWithSrc = this.dealWithSrc.bind(this);
     }
 
-    dealWithSrc (forceSrc){
-        let {src,loadingSrc,errorSrc,onError,onLoad} = this.props;
+    dealWithSrc(forceSrc) {
+        let {src, loadingSrc, errorSrc, onError, onLoad} = this.props;
 
-        forceSrc&&(src = forceSrc);
+        forceSrc && (src = forceSrc);
 
-        if(loadingSrc){
+        if (loadingSrc) {
             this.setState({
-                src:loadingSrc
+                src: loadingSrc
             })
         }
         const img = new Image();
         img.onload = () => {
-            if(!this.unmounted){
-                this.setState({src:src});
-                onLoad&&onLoad();
+            if (!this.unmounted) {
+                this.setState({src: src});
+                onLoad && onLoad();
             }
         };
 
         img.onerror = () => {
-            if(!this.unmounted){
-                if(errorSrc){
+            if (!this.unmounted) {
+                if (errorSrc) {
                     this.setState({
-                        src:errorSrc
+                        src: errorSrc
                     })
                 }
-                onError&&onError();
+                onError && onError();
             }
         };
 
-        img.src = src||"";//no src will trigger onError,just like browser default
+        img.src = src || "";//no src will trigger onError,just like browser default
 
-        if(!src){
+        if (!src) {
             this.setState({//no src no default img,just like browser default
-                src:""
+                src: ""
             });
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.dealWithSrc();
     }
 
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps(nextProps) {
         if (nextProps.src !== this.props.src) {
             this.dealWithSrc(nextProps.src);
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate() {
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.unmounted = true;
     }
 
-    getElement(){
+    getElement() {
         return this.imgElement;
     }
 
-    render(){
-        return <img
-                {...this.props}
+
+    render() {
+        const {placeholderSrc, loadingSrc, errorSrc, ...props} = this.props;
+
+        return (
+            <img
+                {...props}
                 src={this.state.src}
                 onError={noop}
                 onLoad={noop}
-                ref={ref => {this.imgElement = ref;}}
+                ref={ref => {
+                    this.imgElement = ref;
+                }}
             />
+        )
     }
 }
 
 Img.propTypes = {
-    src:PropTypes.string,
-    placeholderSrc:PropTypes.string,
-    loadingSrc:PropTypes.string,
-    errorSrc:PropTypes.string,
+    src: PropTypes.string,
+    placeholderSrc: PropTypes.string,
+    loadingSrc: PropTypes.string,
+    errorSrc: PropTypes.string,
     onError: PropTypes.func,
     onLoad: PropTypes.func,
 };
