@@ -16,7 +16,7 @@ export default class Img extends Component {
     dealWithSrc(forceSrc) {
         let {src, loadingSrc, errorSrc, onError, onLoad} = this.props;
 
-        forceSrc && (src = forceSrc);
+        (forceSrc!=undefined) && (src = forceSrc);
 
         if (loadingSrc) {
             this.setState({
@@ -57,7 +57,7 @@ export default class Img extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.src !== this.props.src) {
-            this.dealWithSrc(nextProps.src);
+            this.dealWithSrc(nextProps.src||"");
         }
     }
 
